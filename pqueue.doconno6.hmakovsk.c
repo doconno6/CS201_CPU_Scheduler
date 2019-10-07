@@ -1,87 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "pqueue.doconno6.hmakovsk.h"
 
-int enqueue(PQueueNode **pqueue, int priority, void *data) {
-    PQueueNode *newNode = (PQueueNode *) malloc(sizeof(PQueueNode));
-    newNode->priority = priority;
-    newNode->data = data;
-    newNode->next = NULL;
-    if((*pqueue) == NULL){
-        *pqueue = newNode;
+
+int enqueue(PQueueNode **pqueue, int priority, void *data){
+    PQueueNode* newNode= (PQueueNode*) malloc(sizeof(PQueueNode));
+    PQueueNode* curr= (PQueueNode*) malloc(sizeof(PQueueNode));
+
+    newNode->priority=priority;
+    newNode->data=data;
+    newNode->next=NULL;
+
+    if (*pqueue==NULL || (*pqueue)->priority>newNode->priority){
+        newNode->next=*pqueue;
+        *pqueue=newNode;
         return 0;
-    } else if ((*pqueue)->priority > priority){
-        newNode->next = *pqueue;
-        *pqueue = newNode;
+    }else{
+        curr=*pqueue;
+    }
+    while(curr->next!=NULL && curr->next->priority<=newNode->priority){
+        curr=curr->next;
+    }
+    if(curr->next==NULL){
+        curr->next=newNode;
+        return 0;
+    }else{
+        newNode->next=curr->next;
+        curr->next=newNode;
         return 0;
     }
-    PQueueNode *this = *pqueue;
-    while (this->next != NULL){
-        if(this->next->priority > priority){
-            newNode->next = this->next;
-            this->next = newNode;
-            return 0;
-        }
-        this = this->next;
-    }
-    this->next = newNode;
-    return 1;
 }
 
-void *dequeue(PQueueNode **pqueue) {
-    if((*pqueue) == NULL){
+
+void *dequeue(PQueueNode **pqueue){
+    if(*pqueue==NULL){
         return NULL;
+    }else{
+        void *data=(*pqueue)->data;
+        *pqueue=(*pqueue)->next;
+        return data;
     }
-    PQueueNode *temp = *pqueue;
-    void *data = temp->data;
-    *pqueue = (*pqueue)->next;
-    free(temp);
-    return data;
+
 }
 
-void *peek(PQueueNode **pqueue) {
-    if((*pqueue) == NULL){
+void *peek(PQueueNode *pqueue){
+    if((pqueue)==NULL){
         return NULL;
-    } else {
-        return (*pqueue)->data;
+    }else{
+        return pqueue->data;
     }
 }
 
-void printQueue(PQueueNode *pqueue, void (*printFunction)(void *)) {
-    PQueueNode *this = pqueue;
-    while(this != NULL){
-        printf("priority = %d\tname = ", this->priority);
-        printFunction(this->data);
-        this = this->next;
+
+void printQueue(PQueueNode *pqueue, void (printFunction)(void *)){
+    while(pqueue!=NULL){
+        printf("priority = %d data = ",pqueue->priority);
+        printFunction(pqueue->data);
+        pqueue=pqueue->next;
     }
 }
 
 int getMinPriority(PQueueNode *pqueue){
-    if(pqueue == NULL){
+    if(pqueue==NULL){
         return -1;
+    }else{
+        return pqueue->priority;
     }
-    return pqueue->priority;
 }
 
 int queueLength(PQueueNode *pqueue){
-    if(pqueue == NULL){
-        return 0;
+    int length=0;
+    while(pqueue!=NULL){
+        length++;
+        pqueue=pqueue->next;
     }
-    PQueueNode *this = pqueue;
-    int nodeCount = 1;
-    while(this->next != NULL){
-        nodeCount++;
-        this = this->next;
-    }
-    return nodeCount;
+    return length;
 }
 
-void printStudentRecord(void *data) {
+void printStudentRecord(void *data){
     StudentRecord *node = (StudentRecord *) data;
     printf("%s %d\n", node->name, node->id);
-}
-
-StudentRecord* createRecord(int id, char name[]){
-    StudentRecord *rec = (StudentRecord*)malloc(sizeof(StudentRecord));
-    rec->id = id;
-    strcpy(rec->name, name);
-    return rec;
 }

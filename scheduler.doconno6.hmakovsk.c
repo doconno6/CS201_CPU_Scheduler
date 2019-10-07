@@ -7,6 +7,7 @@
  */
 Process *createProcesses(){
     //Code
+    return NULL;
 }
 
 /**
@@ -29,5 +30,9 @@ void enqueueProcesses(PQueueNode **eventPQueue, Process *processes, int numProce
  */
 void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
     //code
+}
+
+int main(){
+    return 0;
 }
 
