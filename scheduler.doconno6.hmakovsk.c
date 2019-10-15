@@ -1,6 +1,10 @@
 #include "scheduler.doconno6.hmakovsk.h"
 
-
+/**
+ * creates the five processes and returns them in an array.
+ *
+ * @return Processes
+ */
 Process *createProcesses(){
     Process *processes[5];
     processes[0] = (Process*) malloc(sizeof(Process));
@@ -38,7 +42,13 @@ Process *createProcesses(){
     return *processes;
 }
 
-
+/**
+ * enqueue the processes in the event queue at the times specified in the table.
+ *
+ * @param eventPQueue priority queue of events
+ * @param processes processes being added
+ * @param numProcesses number of processes being added
+ */
 void enqueueProcesses(PQueueNode **eventPQueue, Process *processes, int numProcesses){
     int startTimes[5] = {0, 3, 4, 6, 6};
     for(int i = 0; i < numProcesses; i++) {
@@ -46,7 +56,13 @@ void enqueueProcesses(PQueueNode **eventPQueue, Process *processes, int numProce
     }
 }
 
-
+/**
+ * runs all processe through the simulation
+ *
+ * @param schedulerType
+ * @param quantum
+ * @param eventPQueue
+ */
 void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
     int currentTime = getMinPriority(*eventPQueue);
     Event *event = dequeue(eventPQueue);
@@ -57,8 +73,12 @@ void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
     }
 }
 
+void handleEventFCFS(Event event){
+
+}
+
 int main(){
-    PQueueNode eventNode
+    printf("Events have been scheduled");
     return 0;
 }
 
