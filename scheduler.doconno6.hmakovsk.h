@@ -7,6 +7,8 @@
 // Assignment 4
 // CS201A
 //
+#ifndef CPU_SCHEDULER_SCHEDULER_DOCONNO6_HMAKOVSK_H
+#define CPU_SCHEDULER_SCHEDULER_DOCONNO6_HMAKOVSK_H
 
 typedef struct {
     int pid ; //unique identifier
@@ -28,14 +30,36 @@ typedef struct {
     Process *process;
 } Event ;
 
+/**
+ * creates the five processes and returns them in an array.
+ *
+ * @return Processes
+ */
 Process *createProcesses();
 
+/**
+* enqueue the processes in the event queue at the times specified in the table.
+*
+* @param eventPQueue priority queue of events
+* @param processes processes being added
+* @param numProcesses number of processes being added
+*/
 void enqueueProcesses(PQueueNode **eventPQueue, Process *processes, int numProcesses);
 
+/**
+* runs all processe through the simulation
+*
+* @param schedulerType
+* @param quantum
+* @param eventPQueue
+*/
 void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue);
 
+//====================[Part 2]==================================================
 
-#ifndef CPU_SCHEDULER_SCHEDULER_DOCONNO6_HMAKOVSK_H
-#define CPU_SCHEDULER_SCHEDULER_DOCONNO6_HMAKOVSK_H
+Process* createRandomProcesses(int numProcesses, double meanBurstTime);
 
+void enqueueRandomProcesses(int numProcesses, PQueueNode **eventQeueue,
+                            Process* processes, double meanIAT)
+//==============================================================================
 #endif //CPU_SCHEDULER_SCHEDULER_DOCONNO6_HMAKOVSK_H
