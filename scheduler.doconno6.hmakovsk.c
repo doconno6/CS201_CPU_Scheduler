@@ -52,52 +52,56 @@ void enqueueProcesses(PQueueNode **eventPQueue, Process *processes, int numProce
 
 
 void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
-    int currentTime = getMinPriority(*eventPQueue);
+    int CPUBusy=0;
+    PQueueNode* waitQueue;
+    Event* newEvent;
+    Process* currProcess;
+    int totalWaitTime=0;
+
+    int currTime = getMinPriority(*eventPQueue);
     Event *event = dequeue(eventPQueue);
     while (event != NULL){
-        //handleEvent(event)
-        currentTime = getMinPriority(*eventPQueue);
+        if(schedulerType==1) {
+
+            currProcess = event->process;
+            if (event->eventType == PROCESS_SUBMITTED) {
+                currProcess->waitTime = currTime;
+                if (CPUBusy == 0) {
+                    newEvent = (Event *) malloc(sizeof(Event));
+                    newEvent->eventType = PROCESS_STARTS;
+                    newEvent->process = currProcess;
+                    enqueue(eventPQueue, currTime, newEvent);
+                    CPUBusy = 1;
+                } else {
+                    enqueue(&waitQueue, 0, currProcess);
+                }
+            } else if (event->eventType == PROCESS_STARTS) {
+                currProcess->waitTime = currTime - currProcess->waitTime;
+                totalWaitTime += currProcess->waitTime;
+
+                newEvent = (Event *) malloc(sizeof(Event));
+                newEvent->eventType = PROCESS_ENDS;
+                newEvent->process = currProcess;
+                enqueue(eventPQueue, currTime + currProcess->burstTime, newEvent);
+            } else if (event->eventType == PROCESS_ENDS) {
+                if (queueLength(waitQueue) > 0) {
+                    newEvent = (Event *) malloc(sizeof(Event));
+                    newEvent->eventType = PROCESS_STARTS;
+                    newEvent->process = currProcess;
+                    enqueue(eventPQueue, currTime, newEvent);
+                } else {
+                    CPUBusy = 0;
+                }
+            }
+        }else if(schedulerType==2) {
+            //SJF handle
+        }
+        currTime = getMinPriority(*eventPQueue);
         event = dequeue(eventPQueue);
     }
 }
 
-void handleEventFCFS(Event* event,PQueueNode **eventPQueue,int currTime){
-    int CPUBusy=0;
-    PQueueNode* waitQueue;
-    Event* newEvent;
-    Process* currProcess= event->process;
-    int totalWaitTime=0;
 
-    if(event->eventType== PROCESS_SUBMITTED){
-        currProcess->waitTime=currTime;
-        if(CPUBusy==0){
-            newEvent = (Event*) malloc(sizeof(Event));
-            newEvent->eventType= PROCESS_STARTS;
-            newEvent->process=currProcess;
-            enqueue(eventPQueue,currTime,newEvent);
-            CPUBusy=1;
-        }else{
-            enqueueProcesses(&waitQueue,0,currProcess);
-        }
-    }else if( event->eventType==PROCESS_STARTS){
-        currProcess->waitTime= currTime - currProcess->waitTime;
-        totalWaitTime+=currProcess->waitTime;
-
-        newEvent = (Event*) malloc(sizeof(Event));
-        newEvent->eventType=PROCESS_ENDS;
-        newEvent->process=currProcess;
-        enqueue(eventPQueue,currTime+ currProcess->burstTime,newEvent);
-    }else if(event->eventType==PROCESS_ENDS){
-        if(queueLength(waitQueue)>0){
-            newEvent = (Event *) malloc(sizeof(Event));
-            newEvent->eventType = PROCESS_STARTS;
-            newEvent->process = currProcess;
-            enqueue(&eventPQueue, currTime, newEvent);
-        }else{
-            CPUBusy=0;
-        }
-    }
-}
 
 int main(){
     PQueueNode *eventQueue = NULL;

@@ -54,7 +54,7 @@ void enqueueProcesses(PQueueNode **eventPQueue, Process *processes, int numProce
 * @param eventPQueue
 */
 void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue);
-void handleEventFCFS(Event* event,PQueueNode **eventPQueue,int currTime);
+
 
 //====================[Part 2]==================================================
 
