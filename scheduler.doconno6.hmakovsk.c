@@ -87,6 +87,7 @@ void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
                 enqueue(eventPQueue, currTime + currProcess->burstTime, newEvent);
             } else if (event->eventType == PROCESS_ENDS) {
                 if (queueLength(waitQueue) > 0) {
+                    currProcess= dequeue(&waitQueue);
                     newEvent = (Event *) malloc(sizeof(Event));
                     newEvent->eventType = PROCESS_STARTS;
                     newEvent->process = currProcess;
