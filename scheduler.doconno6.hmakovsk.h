@@ -54,7 +54,6 @@ void enqueueProcesses(PQueueNode **eventPQueue, Process *processes, int numProce
 * @param eventPQueue
 */
 void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue);
-void handleEventFCFS(Event event);
 
 //====================[Part 2]==================================================
 
@@ -62,6 +61,6 @@ void handleEventFCFS(Event event);
 Process* createRandomProcesses(int numProcesses, double meanBurstTime);
 
 void enqueueRandomProcesses(int numProcesses, PQueueNode **eventQeueue,
-                            Process* processes, double meanIAT)
+                            Process* processes, double meanIAT);
 //==============================================================================
 #endif //CPU_SCHEDULER_SCHEDULER_DOCONNO6_HMAKOVSK_H
