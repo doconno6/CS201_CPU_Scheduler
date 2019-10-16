@@ -61,6 +61,44 @@ void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
     }
 }
 
+void handleEventFCFS(Event* event,PQueueNode **eventPQueue,int currTime){
+    int CPUBusy=0;
+    PQueueNode* waitQueue;
+    Event* newEvent;
+    Process* currProcess= event->process;
+    int totalWaitTime=0;
+
+    if(event->eventType== PROCESS_SUBMITTED){
+        currProcess->waitTime=currTime;
+        if(CPUBusy==0){
+            newEvent = (Event*) malloc(sizeof(Event));
+            newEvent->eventType= PROCESS_STARTS;
+            newEvent->process=currProcess;
+            enqueue(eventPQueue,currTime,newEvent);
+            CPUBusy=1;
+        }else{
+            enqueueProcesses(&waitQueue,0,currProcess);
+        }
+    }else if( event->eventType==PROCESS_STARTS){
+        currProcess->waitTime= currTime - currProcess->waitTime;
+        totalWaitTime+=currProcess->waitTime;
+
+        newEvent = (Event*) malloc(sizeof(Event));
+        newEvent->eventType=PROCESS_ENDS;
+        newEvent->process=currProcess;
+        enqueue(eventPQueue,currTime+ currProcess->burstTime,newEvent);
+    }else if(event->eventType==PROCESS_ENDS){
+        if(queueLength(waitQueue)>0){
+            newEvent = (Event *) malloc(sizeof(Event));
+            newEvent->eventType = PROCESS_STARTS;
+            newEvent->process = currProcess;
+            enqueue(&eventPQueue, currTime, newEvent);
+        }else{
+            CPUBusy=0;
+        }
+    }
+}
+
 int main(){
     PQueueNode *eventQueue = NULL;
     enqueueProcesses(&eventQueue, createProcesses(), 5);
