@@ -75,6 +75,7 @@ void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
                     enqueue(eventPQueue, currTime, newEvent);
                     CPUBusy = 1;
                 } else {
+                    //difference
                     enqueue(&waitQueue, 0, currProcess);
                 }
             } else if (event->eventType == PROCESS_STARTS) {
@@ -98,6 +99,38 @@ void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
             }
         }else if(schedulerType==2) {
             //SJF handle
+            currProcess = event->process;
+            if (event->eventType == PROCESS_SUBMITTED) {
+                currProcess->waitTime = currTime;
+                if (CPUBusy == 0) {
+                    newEvent = (Event *) malloc(sizeof(Event));
+                    newEvent->eventType = PROCESS_STARTS;
+                    newEvent->process = currProcess;
+                    enqueue(eventPQueue, currTime, newEvent);
+                    CPUBusy = 1;
+                } else {
+                    //difference
+                    enqueue(&waitQueue,currProcess->burstTime, currProcess);
+                }
+            } else if (event->eventType == PROCESS_STARTS) {
+                currProcess->waitTime = currTime - currProcess->waitTime;
+                totalWaitTime += currProcess->waitTime;
+
+                newEvent = (Event *) malloc(sizeof(Event));
+                newEvent->eventType = PROCESS_ENDS;
+                newEvent->process = currProcess;
+                enqueue(eventPQueue, currTime + currProcess->burstTime, newEvent);
+            } else if (event->eventType == PROCESS_ENDS) {
+                if (queueLength(waitQueue) > 0) {
+                    currProcess= dequeue(&waitQueue);
+                    newEvent = (Event *) malloc(sizeof(Event));
+                    newEvent->eventType = PROCESS_STARTS;
+                    newEvent->process = currProcess;
+                    enqueue(eventPQueue, currTime, newEvent);
+                } else {
+                    CPUBusy = 0;
+                }
+            }
         }
         currTime = getMinPriority(*eventPQueue);
         event = dequeue(eventPQueue);
