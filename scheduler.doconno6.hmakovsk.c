@@ -58,6 +58,8 @@ void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
     Process* currProcess;
     int totalWaitTime=0;
 
+    waitQueue=NULL;
+
     int currTime = getMinPriority(*eventPQueue);
     Event *event = dequeue(eventPQueue);
     while (event != NULL){
