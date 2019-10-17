@@ -63,5 +63,6 @@ Process* createRandomProcesses(int numProcesses, double meanBurstTime);
 
 void enqueueRandomProcesses(int numProcesses, PQueueNode **eventQeueue,
                             Process* processes, double meanIAT);
+
 //==============================================================================
 #endif //CPU_SCHEDULER_SCHEDULER_DOCONNO6_HMAKOVSK_H
