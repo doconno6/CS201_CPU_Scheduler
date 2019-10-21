@@ -6,18 +6,24 @@ Process *createProcesses(){
 
     processes[0].pid = 1;
     processes[0].burstTime = 6;
+    processes[0].waitTime = 0;
+
 
     processes[1].pid = 2;
     processes[1].burstTime = 7;
+    processes[0].waitTime = 0;
 
     processes[2].pid = 3;
     processes[2].burstTime = 2;
+    processes[0].waitTime = 0;
 
     processes[3].pid = 4;
     processes[3].burstTime = 5;
+    processes[0].waitTime = 0;
 
     processes[4].pid = 5;
     processes[4].burstTime = 2;
+    processes[0].waitTime = 0;
 
     return processes;
 }
