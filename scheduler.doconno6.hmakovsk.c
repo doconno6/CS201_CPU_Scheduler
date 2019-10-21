@@ -151,6 +151,7 @@ void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
                     newEvent->eventType = PROCESS_STARTS;
                     newEvent->process = currProcess;
                     enqueue(eventPQueue, currTime, newEvent);
+
                 } else {
                     CPUBusy = 0;
                 }
