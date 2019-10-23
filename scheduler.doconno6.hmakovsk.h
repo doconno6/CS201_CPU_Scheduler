@@ -1,5 +1,7 @@
 #include "pqueue.doconno6.hmakovsk.c"
 #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 //
 // Dan O'Connor-D'Amico
@@ -63,6 +65,8 @@ Process* createRandomProcesses(int numProcesses, double meanBurstTime);
 
 void enqueueRandomProcesses(int numProcesses, PQueueNode **eventQeueue,
                             Process* processes, double meanIAT);
+
+int genExpRand(double mean);
 
 //==============================================================================
 #endif //CPU_SCHEDULER_SCHEDULER_DOCONNO6_HMAKOVSK_H
