@@ -74,9 +74,7 @@ Process* createRandomProcesses(int numProcesses, double meanBurstTime) {
         processes[i].burstTime = (int) genExpRand(meanBurstTime);
 
     }
-
     return processes;
-
 }
 
 void enqueueRandomProcesses(int numProcesses, PQueueNode **eventQueue,
@@ -268,22 +266,23 @@ void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
 
 int main(){
     PQueueNode *eventQueue = NULL;
-    enqueueProcesses(&eventQueue, createProcesses(), 5);
-    printf("-----------------FCFS-----------------\n");
-    runSimulation(1, 1, &eventQueue);
 
-    printf("\n\n");
-    eventQueue = NULL;
-    enqueueProcesses(&eventQueue, createProcesses(), 5);
-    printf("-----------------SJF-----------------\n");
-    runSimulation(2, 1, &eventQueue);
-
-
-    printf("\n\n");
-    eventQueue = NULL;
-    enqueueProcesses(&eventQueue, createProcesses(), 5);
-    printf("-----------------RR-----------------\n");
-    runSimulation(3, 4, &eventQueue);
+//    enqueueProcesses(&eventQueue, createProcesses(), 5);
+//    printf("-----------------FCFS-----------------\n");
+//    runSimulation(1, 1, &eventQueue);
+//
+//    printf("\n\n");
+//    eventQueue = NULL;
+//    enqueueProcesses(&eventQueue, createProcesses(), 5);
+//    printf("-----------------SJF-----------------\n");
+//    runSimulation(2, 1, &eventQueue);
+//
+//
+//    printf("\n\n");
+//    eventQueue = NULL;
+//    enqueueProcesses(&eventQueue, createProcesses(), 5);
+//    printf("-----------------RR-----------------\n");
+//    runSimulation(3, 4, &eventQueue);
 
     unsigned short *i;
     i = malloc(sizeof(unsigned short));
@@ -294,7 +293,7 @@ int main(){
     eventQueue = NULL;
     enqueueRandomProcesses(1000,&eventQueue, createRandomProcesses(1000,25), 25);
     printf("-----------------FCFS - Random Seed 1-----------------\n");
-    runSimulation(1,1,&eventQueue);
+    runSimulation(2,1,&eventQueue);
 
 
     return 0;
