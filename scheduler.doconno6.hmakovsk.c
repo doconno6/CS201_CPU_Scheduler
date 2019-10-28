@@ -32,6 +32,25 @@ Process *createProcesses(){
     return processes;
 }
 
+int genExpRand (double mean) {
+
+    double r=0;
+    double t;
+    int rtnval;
+    r = drand48();
+
+    t = (-1)*log(1-r)*mean;
+
+    //printf("%f",t);
+
+    rtnval = (int) floor(t);
+
+    if (rtnval == 0){
+        rtnval=1;
+    }
+    return rtnval;
+}
+
 
 void enqueueProcesses(PQueueNode **eventPQueue, Process *processes, int numProcesses){
     int startTimes[5] = {0, 3, 4, 6, 6};
@@ -43,6 +62,36 @@ void enqueueProcesses(PQueueNode **eventPQueue, Process *processes, int numProce
         event->process = &processes[i];
         enqueue(eventPQueue, startTimes[i], event);
     }
+}
+
+Process* createRandomProcesses(int numProcesses, double meanBurstTime) {
+    Process *processes = (Process *) malloc(numProcesses * sizeof(Process));
+
+    for (int i = 0; i < numProcesses; i++) {
+        processes[i].pid= i + 1;// start the process IDs at 1 instead of zero processes [ i ] . waitTime = 0;
+        processes[i].lastTime=0;
+        processes[i].numPreemptions=0;
+        processes[i].burstTime = (int) genExpRand(meanBurstTime);
+
+    }
+
+    return processes;
+
+}
+
+void enqueueRandomProcesses(int numProcesses, PQueueNode **eventQueue,
+                            Process* processes, double meanIAT){
+    Event* event;
+    int t=0;
+    for (int i =0; i<numProcesses ; i++ ) {
+        event = (Event*) malloc(sizeof(Event));
+        memset(event , 0, sizeof(Event));
+        event->eventType= PROCESS_SUBMITTED;
+        event->process = &processes[i];
+        enqueue(eventQueue,t,event);
+        t = t + (int) genExpRand(meanIAT);
+    }
+
 }
 
 //void printEvent(void* data){
@@ -61,6 +110,10 @@ void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
     PQueueNode* waitQueue;
     Event* newEvent;
     Process* currProcess;
+
+    int waitTimesSize=1000;
+    int* waitTimes= (int*) malloc(waitTimesSize*sizeof(int));
+    int waitTimesIndex=0;
 
     int totalWaitTime=0,
         numProcesses=0;
@@ -105,6 +158,9 @@ void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
             } else if (event->eventType == PROCESS_ENDS) {
                 printf("t = %d  PROCESS_ENDS \t\t\tpid = %d  \twait time = %d\n", currTime, currProcess->pid,
                        currProcess->waitTime);
+                waitTimes[waitTimesIndex] = currProcess->waitTime;
+                waitTimesIndex++;
+
                 totalWaitTime += currProcess->waitTime;
                 numProcesses += 1;
                 if (queueLength(waitQueue) > 0) {
@@ -157,6 +213,8 @@ void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
             } else if (event->eventType == PROCESS_ENDS) {
                 printf("t = %d  PROCESS_ENDS \t\t\tpid = %d  \twait time = %d\n", currTime, currProcess->pid,
                        currProcess->waitTime);
+                waitTimes[waitTimesIndex] = currProcess->waitTime;
+                waitTimesIndex++;
                 numProcesses += 1;
                 totalWaitTime += currProcess->waitTime;
 
@@ -187,27 +245,25 @@ void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue){
     }
     //Calc and display average
     double averageWaitTime = (double)totalWaitTime/(double)numProcesses;
-    printf("Average wait time = %f", averageWaitTime);
+
+    double stdDev=0;
+    double temp=0;
+
+    for(int i= 0; i< numProcesses ; i++){
+        temp=pow((waitTimes[i]-averageWaitTime),2);
+
+        stdDev+=temp;
+    }
+
+    stdDev= sqrt(stdDev/(numProcesses-1));
+
+    printf("Average wait time = %.2f\n", averageWaitTime);
+    printf("Standard Deviation= %.2f ",stdDev);
+
 }
 
-Process *createRandomProcesses(int numProcesses, double meanBurstTime) {
-    return NULL;
-}
 
-void enqueueRandomProcesses(int numProcesses, PQueueNode **eventQeueue, Process *processes, double meanIAT) {
 
-}
-
-int genExpRand(double mean) {
-    double r, t;
-    int rtnval;
-    r = rand();
-    t = -log(1-r)*mean;
-    rtnval = (int)floor(t);
-    if(rtnval == 0)
-        rtnval = 1;
-    return (rtnval);
-}
 
 
 int main(){
@@ -228,6 +284,18 @@ int main(){
     enqueueProcesses(&eventQueue, createProcesses(), 5);
     printf("-----------------RR-----------------\n");
     runSimulation(3, 4, &eventQueue);
+
+    unsigned short *i;
+    i = malloc(sizeof(unsigned short));
+    *i=1;
+    seed48(i);
+
+    printf("\n\n");
+    eventQueue = NULL;
+    enqueueRandomProcesses(1000,&eventQueue, createRandomProcesses(1000,25), 25);
+    printf("-----------------FCFS - Random Seed 1-----------------\n");
+    runSimulation(1,1,&eventQueue);
+
 
     return 0;
 }

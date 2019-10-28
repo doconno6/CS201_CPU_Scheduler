@@ -63,7 +63,7 @@ void runSimulation(int schedulerType, int quantum, PQueueNode **eventPQueue);
 
 Process* createRandomProcesses(int numProcesses, double meanBurstTime);
 
-void enqueueRandomProcesses(int numProcesses, PQueueNode **eventQeueue,
+void enqueueRandomProcesses(int numProcesses, PQueueNode **eventQueue,
                             Process* processes, double meanIAT);
 
 int genExpRand(double mean);
